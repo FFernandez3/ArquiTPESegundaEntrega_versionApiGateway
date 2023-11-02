@@ -140,10 +140,7 @@ public class TravelController {
             return ResponseEntity.status(404).body("No se encontró ningun viaje.");
         }
     }
-    //pedir los id  monopatines
-   /* public Long getIdScooter(){
 
-    }*/
 
 
 }

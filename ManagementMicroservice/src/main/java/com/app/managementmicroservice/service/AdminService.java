@@ -1,7 +1,9 @@
 package com.app.managementmicroservice.service;
 
+import com.app.managementmicroservice.domain.Manager;
 import com.app.managementmicroservice.dto.*;
 import com.app.managementmicroservice.repository.ManagementRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +20,39 @@ public class AdminService {
 
     private final ManagementRepository managementRepository;
     private final RestTemplate restTemplate;
+
+    //CRUD
+    @Transactional
+    public Manager save(Manager entity) throws Exception {
+        try {
+            return this.managementRepository.save(entity);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public List<ManagerDTO> findAll() {
+        return this.managementRepository.findAll().stream()
+                .map(manager -> new ManagerDTO(manager.getId(), manager.getFileNumber(),
+                        manager.getName(), manager.getRole()))
+                .toList();
+
+    }
+    public Optional<ManagerDTO> findById(Long id) {
+        return this.managementRepository.findById(id).map(manager -> new ManagerDTO(manager.getId(), manager.getFileNumber(),
+                manager.getName(), manager.getRole()));
+
+    }
+    @Transactional
+    public Optional<Manager> deleteById(Long id) {
+        Optional<Manager> entityToDelete = managementRepository.findById(id);
+        entityToDelete.ifPresent(entity -> managementRepository.deleteById(id));
+        return entityToDelete;
+    }
+    @Transactional
+    public int updateRoleManagerById(Long id, String role){
+        return this.managementRepository.updateRoleManagerById(id, role);
+    }
 
    /* public Scooter addScooter(Scooter newScooter) throws Exception {
         try{
@@ -34,7 +70,7 @@ public class AdminService {
         }
 
     }*/
-
+    //SERVICIOS DEL ADMIN
     public ScooterResponseDTO addScooter(ScooterRequestDTO newScooter) throws HttpClientErrorException {
         ScooterResponseDTO response = restTemplate.postForObject("http://localhost:8082/api/scooters", newScooter, ScooterResponseDTO.class);
         return response;
@@ -146,6 +182,15 @@ public class AdminService {
         catch (Exception e){
             throw new Exception(e.getMessage());
         }
+
+    }
+
+    public ResponseEntity sendScooterToMaintenance(Long id, boolean availability) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange("http://localhost:8082/api/scooters/isAvailable/" + id + "?isAvailable=" + availability, HttpMethod.PUT, requestEntity, String.class);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return response;
 
     }
 }

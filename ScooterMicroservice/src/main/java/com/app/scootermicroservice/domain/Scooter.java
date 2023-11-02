@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Data
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Scooter  {
+public class Scooter implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,7 +41,7 @@ public class Scooter  {
     @Column(nullable = true)
     private LocalDate lastMaintenance;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(nullable = false)
     private Stop stop;

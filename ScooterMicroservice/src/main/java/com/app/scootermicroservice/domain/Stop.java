@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Stop {
+public class Stop implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
