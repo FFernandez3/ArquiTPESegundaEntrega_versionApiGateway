@@ -3,10 +3,20 @@ package com.app.managementmicroservice.controller;
 import com.app.managementmicroservice.domain.Manager;
 import com.app.managementmicroservice.dto.*;
 import com.app.managementmicroservice.service.AdminService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +24,8 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/employees")
+@Tag(name = "AdminController", description = "Controlador para gestionar recursos relacionados con empleados")
+/*@ApiResponse(tags = "MyAdminController", description = "Controlador para gestionar recursos relacionados con empleados")*/
 public class AdminController {
 
     private AdminService adminService;
@@ -23,12 +35,24 @@ public class AdminController {
         return this.adminService.save(entity);
     }
     @GetMapping("")
+    @Operation(summary = "Obtener lista de empleados", description = "Este endpoint se utiliza para obtener una lista de todos los empleado.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Empleados obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida - URL incorrecta", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))})
     public List<ManagerDTO> findAll( ){
         return this.adminService.findAll();
     }
 
+
     //busca por id
     @GetMapping("/id/{id}")
+    @Operation(summary = "Obtener un empleado", description = "Este endpoint se utiliza para obtener un empleado por ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Empleado obtenido correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation= Manager.class))),
+            @ApiResponse(responseCode = "404", description = "Empleado no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
+
     public ResponseEntity<?> findById(@PathVariable Long id){
         Optional<ManagerDTO> managerFinded=this.adminService.findById(id);
         if(managerFinded.isPresent()){
@@ -42,17 +66,28 @@ public class AdminController {
     }
     //esto debe hacerlo solo el admin
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un empleado", description = "Este endpoint se utiliza para eliminar un empleado por ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Éxito - Empleado eliminado correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation= Manager.class))),
+            @ApiResponse(responseCode = "404", description = "Empleado no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         Optional<Manager> entityDeleted = adminService.deleteById(id);
 
         if (entityDeleted.isPresent()) {
-            return ResponseEntity.ok("Administrador eliminado correctamente.");
+            /*return ResponseEntity.ok("Administrador eliminado correctamente.");*/
+            return ResponseEntity.status(204).body("Administrador eliminado correctamente."); //VERIFICAR ESTO PQ LO CAMBIAMOS
         } else {
             return ResponseEntity.status(404).body("No se encontró ningun administrador con el ID proporcionado.");
         }
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Editar un empleado", description = "Este endpoint se utiliza para editar un empleado por ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Empleado actualizado correctamente", content = @Content(mediaType = "application/json")), /*no pongo esto pq no devulvo un obj , schema = @Schema(implementation= Manager.class)*/
+            @ApiResponse(responseCode = "404", description = "Empleado no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
     public ResponseEntity<?> updateManagerById(@PathVariable Long id, @RequestParam String role) {
         int rowsUpdated =adminService.updateRoleManagerById(id, role);
         if (rowsUpdated > 0){
@@ -66,11 +101,21 @@ public class AdminController {
     }
     //SERVICIOS QUE HACE EL ADMIN
     @PostMapping("/administrators/scooter")
+    @Operation(summary = "Agregar un monopatin", description = "Este endpoint se utiliza para agregar un monopatin.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Monopatin agregado  correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation= ScooterResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida - Monopatín no agregado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
     public ScooterResponseDTO addScooter(@RequestBody ScooterRequestDTO newScooter) throws Exception{
         return this.adminService.addScooter(newScooter);
     }
 
     @DeleteMapping("/administrators/scooter/{id}")
+    @Operation(summary = "Eliminar un monopatin", description = "Este endpoint se utiliza para eliminar un monopatin por ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Éxito - Monopatin eliminado correctamente", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Monopatin no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
     public ResponseEntity<?> deleteScooterById(@PathVariable Long id) {
         ResponseEntity entityDeleted = adminService.deleteScooterById(id);
 
@@ -81,6 +126,12 @@ public class AdminController {
         }
     }
     @GetMapping("/administrators/scooters")
+    @Operation(summary = "Obtener lista de monopatines", description = "Este endpoint se utiliza para obtener una lista de todos los monopatines.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Monopatines obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida - URL incorrecta", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No se encontró ningun monopatin", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))), /*lo agrego como estamos devolviendo un 404*/
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))})
     public ResponseEntity<?> getAllScooters() throws Exception {
         List<ScooterResponseDTO> entities = adminService.getAllScooters();
         if(entities!= null){
@@ -90,11 +141,22 @@ public class AdminController {
         }
     }
     @PostMapping("/administrators/stop")
+    @Operation(summary = "Crear una nueva  parada", description = "Este endpoint se utiliza para crear una nueva parada.")
+    @ApiResponses({
+                    @ApiResponse(responseCode = "201", description = "Parada creada correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StopResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Solicitud inválida - Parada no creado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))})
     public StopResponseDTO addStop(@RequestBody StopRequestDTO requestDTO){
         return this.adminService.addStop(requestDTO);
     }
 
     @DeleteMapping("/administrators/stop/{id}")
+    @Operation(summary = "Eliminar parada por ID", description = "Este endpoint se utiliza para eliminar una parada por su ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Parada eliminada correctamente", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "404", description = "Parada no encontrada", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
+    })
     public ResponseEntity<?> deleteStopById(@PathVariable Long id) {
         ResponseEntity entityDeleted = adminService.deleteStopById(id);
 
@@ -106,6 +168,12 @@ public class AdminController {
     }
     // punto B
     @PutMapping("/administrators/modifyStateOfAccount/{id}/state/{state}")
+    @Operation(summary = "Modificar estado de cuenta por ID", description = "Este endpoint se utiliza para modificar el estado de una cuenta por su ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Estado de cuenta modificado correctamente", content = @Content(mediaType = "text/plain")), /*el text plain estará bn aca? no madamos json*/
+            @ApiResponse(responseCode = "404", description = "Cuenta no encontrada", content = @Content(mediaType = "text/plain", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain", schema = @Schema(implementation = ErrorResponse.class)))
+    })
     public ResponseEntity<?> modifyStateOfAccountById(@PathVariable Long id,@PathVariable boolean state) {
         ResponseEntity entityDeleted = adminService.modifyStateOfAccountById(id, state);
 
@@ -118,32 +186,65 @@ public class AdminController {
 
     //Punto F
     @PostMapping("/administrators/price")
+    @Operation(summary = "Crear un nuevo precio", description = "Este endpoint se utiliza para crear un nuevo precio.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Precio creado correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PriceResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida - Precio no creado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))})
     public PriceResponseDTO addPrice(@RequestBody PriceRequestDTO requestDTO){
         return this.adminService.addPrice(requestDTO);
     }
 
     // punto d
     @GetMapping("/administrators/totalInvoiced/month1/{month1}/month2/{month2}/year/{year}")
+    @Operation(summary = "Obtener total facturado entre dos meses de un año", description = "Este endpoint se utiliza para obtener el total facturado entre dos meses de un año.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Total facturado obtenido correctamente", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida - Meses o año incorrectos", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<?>getTotalInvoicedByDate(@PathVariable Integer month1, @PathVariable Integer month2, @PathVariable Integer year){
         return this.adminService.getTotalInvoicedByDate(month1, month2, year);
     }
     // punto E
     @GetMapping("/administrators/scootersAvailability")
+    @Operation(summary = "Obtener cantidad de monopatines disponibles y no disponibles", description = "Este endpoint se utiliza para obtener la cantidad de monopatines disponibles y no disponibles.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Cantidad de monopatines obtenida correctamente", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
+    })
     public ResponseEntity<?>getScootersAvailability(){
         return this.adminService.getScootersAvailability();
     }
 
     @GetMapping("/administrators/scooters/year/{year}/quantity/{quantity}")
+    @Operation(summary = "Obtener cantidad de viajes por monopatín en un año", description = "Este endpoint se utiliza para obtener la cantidad de viajes realizados por cada monopatín en un año específico.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Lista de viajes obtenida correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class)))),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida - Año o cantidad incorrectos", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
+    })
     public ResponseEntity<?>getScootersByYearAndQuantity(@PathVariable Long year,@PathVariable Long quantity) throws Exception {
         return this.adminService.getScootersByYearAndQuantity(year, quantity);
     }
     //SERVICIOS QUE HACE EL DE MANTENIMIENTO
     // punto A
     @GetMapping("/maintenance/scootersReport")
+    @Operation(summary = "Obtener informe de monopatines", description = "Este endpoint se utiliza para obtener un informe de monopatines.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Informe de monopatines obtenido correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ScooterResponseDTO.class)))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
+    })
     public List<ScooterResponseDTO> getScootersReport() throws Exception {
         return this.adminService.getScootersReport();
     }
     @PutMapping("/maintenance/scooter/id/{id}/availability/{availability}")
+    @Operation(summary = "Actualizar disponibilidad de monopatín", description = "Este endpoint se utiliza para enviar o sacar un monopatín de mantenimiento .")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Éxito - Disponibilidad del monopatín actualizada correctamente", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "404", description = "Monopatín no encontrado", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
+    })
     public ResponseEntity<?> sendScooterToMaintenance(@PathVariable Long id, @PathVariable boolean availability){
         ResponseEntity entityDeleted = adminService.sendScooterToMaintenance(id, availability);
 
