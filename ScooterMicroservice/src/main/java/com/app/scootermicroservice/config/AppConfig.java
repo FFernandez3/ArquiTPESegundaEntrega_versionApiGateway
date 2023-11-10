@@ -13,8 +13,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages=("com.app.managementmicroservice.repository"))
-@EntityScan(basePackages = "com.app.managementmicroservice.domain")
+@EnableJpaRepositories(basePackages=("com.app.scootermicroservice.repository"))
+@EntityScan(basePackages = "com.app.scootermicroservice.domain")
 public class AppConfig {
     @Bean("clientRest")
     public RestTemplate restTemplateRegistration(){
