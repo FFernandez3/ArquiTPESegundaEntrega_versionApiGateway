@@ -105,7 +105,7 @@ public class AccountController {
     @PutMapping("/isCanceled/{id}")
     @Operation(summary = "Editar el estado de una cuenta", description = "Este endpoint se utiliza para editar el estado de una cuenta por ID.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Éxito - Estado de la cuenta actualizado correctamente", content = @Content(mediaType = "application/json")), 
+            @ApiResponse(responseCode = "200", description = "Éxito - Estado de la cuenta actualizado correctamente", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "Cuenta no encontrada", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
     public ResponseEntity<?> updateIsCanceledById(@PathVariable Long id, @RequestParam boolean isCanceled) {

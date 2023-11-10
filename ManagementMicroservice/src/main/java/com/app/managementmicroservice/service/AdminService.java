@@ -2,7 +2,7 @@ package com.app.managementmicroservice.service;
 
 import com.app.managementmicroservice.domain.Manager;
 import com.app.managementmicroservice.dto.*;
-import com.app.managementmicroservice.repository.ManagementRepository;
+import com.app.managementmicroservice.repository.ManagementMongoRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.*;
@@ -18,41 +18,40 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AdminService {
 
-    private final ManagementRepository managementRepository;
+    private final ManagementMongoRepository managementRepository;
     private final RestTemplate restTemplate;
 
     //CRUD
     @Transactional
-    public Manager save(Manager entity) throws Exception {
-        try {
-            return this.managementRepository.save(entity);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+    public ManagerResponseDTO save(ManagerRequestDTO requestDTO) throws Exception {
+        var manager = new Manager(requestDTO);
+        manager = this.managementRepository.save(manager);
+        return new ManagerResponseDTO(manager);
     }
 
-    public List<ManagerDTO> findAll() {
+    public List<ManagerResponseDTO> findAll() {
         return this.managementRepository.findAll().stream()
-                .map(manager -> new ManagerDTO(manager.getId(), manager.getFileNumber(),
+                .map(manager -> new ManagerResponseDTO(manager.get_id(), manager.getFileNumber(),
                         manager.getName(), manager.getRole()))
                 .toList();
 
     }
-    public Optional<ManagerDTO> findById(Long id) {
-        return this.managementRepository.findById(id).map(manager -> new ManagerDTO(manager.getId(), manager.getFileNumber(),
+    public Optional<ManagerResponseDTO> findById(String id) {
+        return this.managementRepository.findById(id).map(manager -> new ManagerResponseDTO(manager.get_id(), manager.getFileNumber(),
                 manager.getName(), manager.getRole()));
 
     }
     @Transactional
-    public Optional<Manager> deleteById(Long id) {
+    public Optional<Manager> deleteById(String id) {
         Optional<Manager> entityToDelete = managementRepository.findById(id);
         entityToDelete.ifPresent(entity -> managementRepository.deleteById(id));
         return entityToDelete;
     }
-    @Transactional
+
+    /*@Transactional
     public int updateRoleManagerById(Long id, String role){
         return this.managementRepository.updateRoleManagerById(id, role);
-    }
+    }*/
 
    /* public Scooter addScooter(Scooter newScooter) throws Exception {
         try{

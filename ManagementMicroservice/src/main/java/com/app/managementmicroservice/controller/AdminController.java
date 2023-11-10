@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -31,7 +30,7 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("")
-    public Manager save(@RequestBody Manager entity) throws Exception{
+    public ManagerResponseDTO save(@RequestBody ManagerRequestDTO entity) throws Exception{
         return this.adminService.save(entity);
     }
     @GetMapping("")
@@ -40,7 +39,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Éxito - Empleados obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),
             @ApiResponse(responseCode = "400", description = "Solicitud inválida - URL incorrecta", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))})
-    public List<ManagerDTO> findAll( ){
+    public List<ManagerResponseDTO> findAll( ){
         return this.adminService.findAll();
     }
 
@@ -53,8 +52,8 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
 
-    public ResponseEntity<?> findById(@PathVariable Long id){
-        Optional<ManagerDTO> managerFinded=this.adminService.findById(id);
+    public ResponseEntity<?> findById(@PathVariable String id){
+        Optional<ManagerResponseDTO> managerFinded=this.adminService.findById(id);
         if(managerFinded.isPresent()){
             return ResponseEntity.ok(managerFinded);
         }
@@ -71,7 +70,7 @@ public class AdminController {
             @ApiResponse(responseCode = "204", description = "Éxito - Empleado eliminado correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation= Manager.class))),
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteById(@PathVariable String id) {
         Optional<Manager> entityDeleted = adminService.deleteById(id);
 
         if (entityDeleted.isPresent()) {
@@ -82,10 +81,10 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/{id}")
+  /*  @PutMapping("/{id}")
     @Operation(summary = "Editar un empleado", description = "Este endpoint se utiliza para editar un empleado por ID.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Éxito - Empleado actualizado correctamente", content = @Content(mediaType = "application/json")), /*no pongo esto pq no devulvo un obj , schema = @Schema(implementation= Manager.class)*/
+            @ApiResponse(responseCode = "200", description = "Éxito - Empleado actualizado correctamente", content = @Content(mediaType = "application/json")), /*no pongo esto pq no devulvo un obj , schema = @Schema(implementation= Manager.class)
             @ApiResponse(responseCode = "404", description = "Empleado no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation=ErrorResponse.class)))})
     public ResponseEntity<?> updateManagerById(@PathVariable Long id, @RequestParam String role) {
@@ -98,7 +97,7 @@ public class AdminController {
             return ResponseEntity.status(404).body("No se encontró ningun administrador con el ID proporcionado.");
         }
 
-    }
+    }*/
     //SERVICIOS QUE HACE EL ADMIN
     @PostMapping("/administrators/scooter")
     @Operation(summary = "Agregar un monopatin", description = "Este endpoint se utiliza para agregar un monopatin.")

@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ManagerDTO {
-
-    private Long id;
-
+public class ManagerRequestDTO {
     private Integer fileNumber;
 
     private String name;

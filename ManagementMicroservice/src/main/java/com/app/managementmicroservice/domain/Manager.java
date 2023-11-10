@@ -1,31 +1,27 @@
 package com.app.managementmicroservice.domain;
 
+import com.app.managementmicroservice.dto.ManagerRequestDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document
 @Data
 @NoArgsConstructor
-@Getter
-@Setter
 public class Manager {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column
+    private String _id;
+
     private Integer fileNumber;
-    @Column
+
     private String name;
-    @Column
+
     private String role;
 
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Manager(Integer fileNumber, String name, String role) {
         this.fileNumber = fileNumber;
@@ -33,5 +29,10 @@ public class Manager {
         this.role = role;
     }
 
+    public Manager(ManagerRequestDTO managerRequestDTO){
+        this.fileNumber = managerRequestDTO.getFileNumber();
+        this.name =managerRequestDTO.getName();
+        this.role = managerRequestDTO.getRole();
+    }
 
 }
