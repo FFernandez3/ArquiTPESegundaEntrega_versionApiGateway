@@ -11,17 +11,15 @@ import lombok.NoArgsConstructor;
 public class ManagerResponseDTO {
 
     private String id;
-
-    private Integer fileNumber;
-
     private String name;
+    private String email;
 
-    private String role;
+
 
     public ManagerResponseDTO(Manager manager){
         this.id = manager.get_id();
-        this.fileNumber = manager.getFileNumber();
         this.name = manager.getName();
-        this.role = manager.getRole();
+        this.email= manager.getEmail();
+
     }
 }

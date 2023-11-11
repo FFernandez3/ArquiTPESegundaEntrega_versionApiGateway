@@ -4,13 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class ManagerRequestDTO {
-    private Integer fileNumber;
+
 
     private String name;
+    private String email;
+    private String password;
+    private Set<String> authorities;
 
-    private String role;
+
 }

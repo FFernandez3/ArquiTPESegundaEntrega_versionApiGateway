@@ -2,24 +2,35 @@ package com.app.managementmicroservice.service;
 
 import com.app.managementmicroservice.domain.Manager;
 import com.app.managementmicroservice.dto.*;
+import com.app.managementmicroservice.repository.AuthorityRepository;
 import com.app.managementmicroservice.repository.ManagementMongoRepository;
+import com.app.managementmicroservice.service.exception.EnumManagerException;
+import com.app.managementmicroservice.service.exception.ManagerException;
+import com.app.managementmicroservice.service.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
+@Transactional
+@RequiredArgsConstructor
 public class AdminService {
 
     private final ManagementMongoRepository managementRepository;
+    private final AuthorityRepository authorityRepository;
     private final RestTemplate restTemplate;
+
+    private final PasswordEncoder passwordEncoder;
 
     //CRUD
     @Transactional
@@ -28,17 +39,39 @@ public class AdminService {
         manager = this.managementRepository.save(manager);
         return new ManagerResponseDTO(manager);
     }
+    public ManagerResponseDTO createManager(ManagerRequestDTO request) {
+        if(this.managementRepository.existsManagersByEmailIgnoreCase(request.getEmail())){
+            throw new ManagerException( EnumManagerException.already_exist, String.format("Ya existe un manager con email %s", request.getEmail() ) );
+        }
+
+        final var authorities = request.getAuthorities()
+                .stream()
+                .map( string -> this.authorityRepository.findById(string).orElseThrow( () -> new NotFoundException("Autority", string ) ) )
+                .toList();
+        if( authorities.isEmpty() ){
+            throw new ManagerException( EnumManagerException.invalid_authorities,
+                    String.format("No se encontro ninguna autoridad con id %s", request.getAuthorities().toString() ) );
+
+        }
+        final var manager = new Manager(request);
+        manager.setAuthorities(authorities);
+        final var encryptedPassword = passwordEncoder.encode(request.getPassword());
+        manager.setPassword( encryptedPassword );
+        final var createdManager = this.managementRepository.save(manager);
+        return new ManagerResponseDTO(createdManager);
+
+    }
 
     public List<ManagerResponseDTO> findAll() {
         return this.managementRepository.findAll().stream()
-                .map(manager -> new ManagerResponseDTO(manager.get_id(), manager.getFileNumber(),
-                        manager.getName(), manager.getRole()))
+                .map(manager -> new ManagerResponseDTO(manager.get_id(),
+                        manager.getName(), manager.getEmail()))
                 .toList();
 
     }
     public Optional<ManagerResponseDTO> findById(String id) {
-        return this.managementRepository.findById(id).map(manager -> new ManagerResponseDTO(manager.get_id(), manager.getFileNumber(),
-                manager.getName(), manager.getRole()));
+        return this.managementRepository.findById(id).map(manager -> new ManagerResponseDTO(manager.get_id(),
+                manager.getName(), manager.getEmail()));
 
     }
     @Transactional

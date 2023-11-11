@@ -2,7 +2,10 @@ package com.app.managementmicroservice.controller;
 
 import com.app.managementmicroservice.domain.Manager;
 import com.app.managementmicroservice.dto.*;
+import com.app.managementmicroservice.security.jwt.JwtFilter;
+import com.app.managementmicroservice.security.jwt.TokenProvider;
 import com.app.managementmicroservice.service.AdminService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,9 +13,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +37,42 @@ import java.util.Optional;
 public class AdminController {
 
     private AdminService adminService;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+/*----------------------------------------------------------AUTENTICACION-----------------------------------*/
+    @PostMapping("/authenticate")
+    public ResponseEntity<JWTToken> authenticate( @Valid @RequestBody AuthRequestDTO request ) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( request.getEmail(), request.getPassword() );
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final var jwt = tokenProvider.createToken (authentication );
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add( JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt );
+        return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
+    }
+    @PostMapping("/register")
+    public ResponseEntity<ManagerResponseDTO> register( @Valid @RequestBody ManagerRequestDTO request ){
+        final var newManager = this.adminService.createManager( request );
+        return new ResponseEntity<>( newManager, HttpStatus.CREATED );
+    }
+    static class JWTToken {
+        private String idToken;
+
+        JWTToken(String idToken) {
+            this.idToken = idToken;
+        }
+
+        @JsonProperty("id_token")
+        String getIdToken() {
+            return idToken;
+        }
+
+        void setIdToken(String idToken) {
+            this.idToken = idToken;
+        }
+    }
+/*----------------------------------------------------------CRUD Y OTROS SERVICIOS---------------------------------*/
     @PostMapping("")
     public ManagerResponseDTO save(@RequestBody ManagerRequestDTO entity) throws Exception{
         return this.adminService.save(entity);
