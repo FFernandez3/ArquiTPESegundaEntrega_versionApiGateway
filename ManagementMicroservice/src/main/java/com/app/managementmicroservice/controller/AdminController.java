@@ -5,6 +5,7 @@ import com.app.managementmicroservice.dto.*;
 import com.app.managementmicroservice.security.jwt.JwtFilter;
 import com.app.managementmicroservice.security.jwt.TokenProvider;
 import com.app.managementmicroservice.service.AdminService;
+import com.app.managementmicroservice.service.AuthorityService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -36,6 +37,7 @@ import java.util.Optional;
 /*@ApiResponse(tags = "MyAdminController", description = "Controlador para gestionar recursos relacionados con empleados")*/
 public class AdminController {
 
+    private AuthorityService authorityService;
     private AdminService adminService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -51,10 +53,19 @@ public class AdminController {
         httpHeaders.add( JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt );
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
-    @PostMapping("/register")
-    public ResponseEntity<ManagerResponseDTO> register( @Valid @RequestBody ManagerRequestDTO request ){
+    /*@PostMapping("/register")
+    public ResponseEntity<?> register( @Valid @RequestBody ManagerRequestDTO request ){
         final var newManager = this.adminService.createManager( request );
         return new ResponseEntity<>( newManager, HttpStatus.CREATED );
+    }*/
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register ( @Valid @RequestBody ManagerRequestDTO request ){
+        final var newManager = this.adminService.createManager( request );
+        if(newManager!= null){
+            return new ResponseEntity<>( newManager, HttpStatus.CREATED );
+        }
+        return new ResponseEntity<>("Ya existe un administrador con ese email: " + request.getEmail(), HttpStatus.BAD_REQUEST);
     }
     static class JWTToken {
         private String idToken;
@@ -73,6 +84,15 @@ public class AdminController {
         }
     }
 /*----------------------------------------------------------CRUD Y OTROS SERVICIOS---------------------------------*/
+    @PostMapping("/authority")
+    public ResponseEntity<AuthorityResponseDTO> save(@RequestBody AuthorityRequestDTO entity) {
+        return new ResponseEntity<>(this.authorityService.save(entity), HttpStatus.CREATED);
+    }
+    @GetMapping("/allAuthorities")
+    public List<AuthorityResponseDTO> findAllAuthorities(){
+        return this.authorityService.findAll();
+    }
+
     @PostMapping("")
     public ManagerResponseDTO save(@RequestBody ManagerRequestDTO entity) throws Exception{
         return this.adminService.save(entity);

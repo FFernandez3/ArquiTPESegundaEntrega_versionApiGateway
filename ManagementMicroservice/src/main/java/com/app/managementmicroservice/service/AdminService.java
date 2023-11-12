@@ -39,12 +39,12 @@ public class AdminService {
         manager = this.managementRepository.save(manager);
         return new ManagerResponseDTO(manager);
     }
-    public ManagerResponseDTO createManager(ManagerRequestDTO request) {
-        if(this.managementRepository.existsManagersByEmailIgnoreCase(request.getEmail())){
-            throw new ManagerException( EnumManagerException.already_exist, String.format("Ya existe un manager con email %s", request.getEmail() ) );
+   /* public ManagerException createManager(ManagerRequestDTO request) throws ManagerException {
+        if(this.managementRepository.existsManagersByEmailIgnoreCase(request.getEmail())> 0){
+            return new ManagerException( EnumManagerException.already_exist, String.format("Ya existe un manager con email %s", request.getEmail() ) );
         }
 
-        final var authorities = request.getAuthorities()
+        /*final var authorities = request.getAuthorities()
                 .stream()
                 .map( string -> this.authorityRepository.findById(string).orElseThrow( () -> new NotFoundException("Autority", string ) ) )
                 .toList();
@@ -52,6 +52,27 @@ public class AdminService {
             throw new ManagerException( EnumManagerException.invalid_authorities,
                     String.format("No se encontro ninguna autoridad con id %s", request.getAuthorities().toString() ) );
 
+        }*/
+        /*final var manager = new Manager(request);
+        /*manager.setAuthorities(authorities);
+        final var encryptedPassword = passwordEncoder.encode(request.getPassword());
+        manager.setPassword( encryptedPassword );
+        final var createdManager = this.managementRepository.save(manager);
+        /*return new ManagerResponseDTO(createdManager);*/
+        /*return null;
+    }*/
+
+    public ManagerResponseDTO createManager(ManagerRequestDTO request){
+        if(this.managementRepository.existsManagersByEmailIgnoreCase(request.getEmail())> 0){
+            return null;
+        }
+        final var authorities = request.getAuthorities()
+                .stream()
+                .map( string -> this.authorityRepository.findById(string).orElseThrow( () -> new NotFoundException("Authority", string ) ) )
+                .toList();
+        if( authorities.isEmpty() ) {
+            throw new ManagerException(EnumManagerException.invalid_authorities,
+                    String.format("No se encontro ninguna autoridad con id %s", request.getAuthorities().toString()));
         }
         final var manager = new Manager(request);
         manager.setAuthorities(authorities);
@@ -59,7 +80,6 @@ public class AdminService {
         manager.setPassword( encryptedPassword );
         final var createdManager = this.managementRepository.save(manager);
         return new ManagerResponseDTO(createdManager);
-
     }
 
     public List<ManagerResponseDTO> findAll() {

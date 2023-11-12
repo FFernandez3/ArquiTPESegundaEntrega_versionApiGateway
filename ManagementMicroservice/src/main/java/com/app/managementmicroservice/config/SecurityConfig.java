@@ -23,6 +23,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -46,13 +47,20 @@ public class SecurityConfig {
                 .csrf( AbstractHttpConfigurer::disable )
                 // MANEJAMOS LOS PERMISOS A LOS ENDPOINTS.
                 .authorizeHttpRequests( auth -> auth
-                        
-                        .requestMatchers("/api/deleteScooter").hasRole(AuthorityConstant.ADMIN)
-                        .requestMatchers("/api/**").permitAll()
+
+                        //.requestMatchers("/api/employees").hasRole(AuthorityConstant.ADMIN)
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees/register")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees/authenticate")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees/authority")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees/allAuthorities")).permitAll()
+                        //.anyRequest().authenticated()
+
                 )
                 .anonymous( AbstractHttpConfigurer::disable )
                 .sessionManagement( s -> s.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) );
         http
+
                 .httpBasic( Customizer.withDefaults() );
         return http.build();
     }
@@ -70,6 +78,7 @@ public class SecurityConfig {
         populator.addScript(new ClassPathResource("db_authorities.json"));
         return populator;
     }
+
 
 }
 

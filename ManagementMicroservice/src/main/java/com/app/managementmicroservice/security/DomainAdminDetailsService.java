@@ -1,9 +1,9 @@
 package com.app.managementmicroservice.security;
 import com.app.managementmicroservice.domain.Manager;
 import com.app.managementmicroservice.repository.ManagementMongoRepository;
-import com.monopatin.authservice.entity.mysql.Authority;
-import com.monopatin.authservice.entity.mysql.User;
-import com.monopatin.authservice.repository.mysql.UserRepository;
+import com.app.managementmicroservice.domain.Authority;
+import com.app.managementmicroservice.domain.Manager;
+import com.app.managementmicroservice.repository.ManagementMongoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +23,7 @@ public class DomainAdminDetailsService implements UserDetailsService{
         return managerRepository
                 .findManagerByEmailIgnoreCase( email )
                 .map(this::createSpringSecurityUser)
-                .orElseThrow(() -> new UsernameNotFoundException("No existe el usuario con email " + email ));
+                .orElseThrow(() -> new UsernameNotFoundException("No existe el empleado con email " + email ));
     }
 
 
@@ -34,7 +34,7 @@ public class DomainAdminDetailsService implements UserDetailsService{
                 .map(Authority::getName)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantedAuthorities);
+        return new org.springframework.security.core.userdetails.User(manager.getEmail(), manager.getPassword(), grantedAuthorities);
     }
 
 }

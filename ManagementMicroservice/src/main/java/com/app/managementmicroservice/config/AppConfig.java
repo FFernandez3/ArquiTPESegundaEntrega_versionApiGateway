@@ -1,4 +1,4 @@
-package com.app.managementmicroservice.config;
+ package com.app.managementmicroservice.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;

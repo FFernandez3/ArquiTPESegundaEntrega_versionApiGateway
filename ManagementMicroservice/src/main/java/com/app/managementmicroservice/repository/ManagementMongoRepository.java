@@ -18,5 +18,5 @@ public interface ManagementMongoRepository extends MongoRepository<Manager, Stri
     Optional<Manager> findManagerByEmailIgnoreCase(String email);
 
     @Query(value = "{ 'email' : { '$regex' : ?0, '$options' : 'i' } }", count = true)
-    boolean existsManagersByEmailIgnoreCase(String email );
+    Long existsManagersByEmailIgnoreCase(String email );
 }
