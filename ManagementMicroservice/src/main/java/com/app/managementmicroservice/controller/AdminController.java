@@ -65,7 +65,7 @@ public class AdminController {
         if(newManager!= null){
             return new ResponseEntity<>( newManager, HttpStatus.CREATED );
         }
-        return new ResponseEntity<>("Ya existe un administrador con ese email: " + request.getEmail(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Ya existe un administrador con ese email: " + request.getEmail() + "o el rol ingresado es distinto de admin o maintenance.", HttpStatus.BAD_REQUEST);
     }
     static class JWTToken {
         private String idToken;

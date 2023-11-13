@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 @Component
@@ -21,20 +23,20 @@ public class DomainAdminDetailsService implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return managerRepository
-                .findManagerByEmailIgnoreCase( email )
+                .findByEmailIgnoreCase( email )
                 .map(this::createSpringSecurityUser)
                 .orElseThrow(() -> new UsernameNotFoundException("No existe el empleado con email " + email ));
     }
 
 
     private org.springframework.security.core.userdetails.User createSpringSecurityUser(Manager manager) {
-        List<GrantedAuthority> grantedAuthorities = manager
+        /*List<GrantedAuthority> grantedAuthorities = manager
                 .getAuthorities()
                 .stream()
                 .map(Authority::getName)
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(manager.getEmail(), manager.getPassword(), grantedAuthorities);
+                .collect(Collectors.toList());*/
+        return new org.springframework.security.core.userdetails.User(manager.getEmail(), manager.getPassword(), Collections.singleton(new SimpleGrantedAuthority(manager.getRole())));
     }
 
 }

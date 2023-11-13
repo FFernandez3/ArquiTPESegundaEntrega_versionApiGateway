@@ -22,8 +22,7 @@ public class Manager {
     private String email;
     private String password;
     private String name;
-    @DBRef
-    private Set<Authority> authorities;
+    private String role;
 
     /*private String role;*/
 
@@ -35,17 +34,17 @@ public class Manager {
         this.name = name;
         this.role = role;
     }*/
-   public Manager(String name, String email) {
+   public Manager(String name, String email, String role) {
         this.name = name;
         this.email=email;
+        this.role = role;
     }
 
     public Manager(ManagerRequestDTO managerRequestDTO){
         this.name =managerRequestDTO.getName();
         this.email=managerRequestDTO.getEmail();
+        this.role = managerRequestDTO.getRole();
     }
-    public void setAuthorities( Collection<Authority> authorities ){
-        this.authorities = new HashSet<>( authorities );
-    }
+
 
 }

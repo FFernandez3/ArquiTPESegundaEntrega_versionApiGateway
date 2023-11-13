@@ -13,6 +13,7 @@ public class ManagerResponseDTO {
     private String id;
     private String name;
     private String email;
+    private String role;
 
 
 
@@ -20,6 +21,7 @@ public class ManagerResponseDTO {
         this.id = manager.get_id();
         this.name = manager.getName();
         this.email= manager.getEmail();
+        this.role = manager.getRole();
 
     }
 }
