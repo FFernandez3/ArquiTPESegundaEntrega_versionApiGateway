@@ -50,7 +50,8 @@ public class SecurityConfig {
         http
                 .csrf( AbstractHttpConfigurer::disable )
                 // MANEJAMOS LOS PERMISOS A LOS ENDPOINTS.
-                .authorizeRequests(auth-> auth
+
+                .authorizeHttpRequests(auth-> auth
 
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees")).hasAuthority(AuthorityConstant.MAINTENANCE)
                                 //.requestMatchers(new AntPathRequestMatcher("/api/employees/register")).permitAll()
@@ -58,7 +59,9 @@ public class SecurityConfig {
                                 //.requestMatchers(new AntPathRequestMatcher("/api/employees")).permitAll()
                                 //.requestMatchers(new AntPathRequestMatcher("/api/employees/authority")).permitAll()
                                 //.requestMatchers(new AntPathRequestMatcher("/api/employees/allAuthorities")).permitAll()
+
                         //.anyRequest().authenticated()
+
 
                 )
                 .anonymous( AbstractHttpConfigurer::disable )
