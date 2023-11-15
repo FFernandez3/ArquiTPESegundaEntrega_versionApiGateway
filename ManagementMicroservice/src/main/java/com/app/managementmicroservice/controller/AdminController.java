@@ -16,12 +16,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +46,25 @@ public class AdminController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
 /*----------------------------------------------------------AUTENTICACION-----------------------------------*/
+@GetMapping("/validate")
+public ResponseEntity<ValidateTokenDTO> validateGet() {
+    final var employee = SecurityContextHolder.getContext().getAuthentication();
+    /*final var authorities = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();*/
+    return ResponseEntity.ok(
+            ValidateTokenDTO.builder()
+                    .username( employee.getName() )
+                    .role( employee.getRole() )
+                    .isAuthenticated( true )
+                    .build()
+    );
+}
+    @Data
+    @Builder
+    public static class ValidateTokenDTO {
+        private boolean isAuthenticated;
+        private String username;
+        private String role;
+    }
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authenticate( @Valid @RequestBody AuthRequestDTO request ) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken( request.getEmail(), request.getPassword() );

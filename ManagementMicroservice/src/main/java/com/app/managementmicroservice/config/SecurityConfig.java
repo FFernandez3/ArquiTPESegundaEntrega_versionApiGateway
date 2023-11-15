@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .csrf( AbstractHttpConfigurer::disable )
                 // MANEJAMOS LOS PERMISOS A LOS ENDPOINTS.
                 .authorizeHttpRequests( auth -> auth
-                        
+
                         //.requestMatchers("/api/employees").hasRole(AuthorityConstant.ADMIN)
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/register")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/authenticate")).permitAll()
