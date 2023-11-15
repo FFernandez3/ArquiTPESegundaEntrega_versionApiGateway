@@ -22,16 +22,34 @@ public class RouterConfig {
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
                         .uri("http://localhost:8084"))
-                .route("micro-a-product", r -> r.path( "/api/employees/administrators/scooters" )
+                .route("allScooters", r -> r.path( "/api/scooters" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8082"))
+                .route("maintenance report", r -> r.path( "/api/scooters/allUpdated" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8082"))
+                .route("availability scooters", r -> r.path( "/api/scooters/availabilityQuantity" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8082"))
+                .route("validate", r -> r.path("/api/employees/validate")
+                        .filters(f ->
+                                f.filter(authFilter.apply(new AuthenticationFilter.Config()))
+                        )
+                        .uri("http://localhost:8084"))
+                .route("allEmployees", r -> r.path("/api/employees" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
                         .uri("http://localhost:8084"))
-                .route("micro-a-product", r -> r.path("/api/products/**")
-                        .filters(f ->
-                                f.filter(authFilter.apply(new AuthenticationFilter.Config()))
-                        )
-                        .uri("http://localhost:8082"))
+                .route("scooters near", r -> r.path("/api/users/**" )
+
+                        .uri("http://localhost:8083"))
                 .build();
     }
 

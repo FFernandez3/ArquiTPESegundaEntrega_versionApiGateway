@@ -127,6 +127,7 @@ public ResponseEntity<ValidateTokenDTO> validateGet() {
         return this.adminService.save(entity);
     }
     @GetMapping("")
+
     @Operation(summary = "Obtener lista de empleados", description = "Este endpoint se utiliza para obtener una lista de todos los empleado.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Empleados obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),
@@ -218,7 +219,7 @@ public ResponseEntity<ValidateTokenDTO> validateGet() {
         }
     }
     @GetMapping("/administrators/scooters")
-    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstant.ADMIN + "\" )" )
+    /*@PreAuthorize( "hasAuthority('ADMIN')" )*/
     @Operation(summary = "Obtener lista de monopatines", description = "Este endpoint se utiliza para obtener una lista de todos los monopatines.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Monopatines obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),

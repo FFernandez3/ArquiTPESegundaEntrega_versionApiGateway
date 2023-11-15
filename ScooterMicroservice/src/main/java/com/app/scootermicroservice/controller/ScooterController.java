@@ -48,7 +48,7 @@ public class ScooterController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
     })
     @GetMapping("")
-    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
+    @PreAuthorize( "hasAuthority('ADMIN')" )
     public List<ScooterResponseDTO> findAll( ){
         return this.scooterService.findAll();
     }
@@ -255,7 +255,7 @@ public class ScooterController {
     }
     // punto A
     @GetMapping("/allUpdated")
-
+    @PreAuthorize("hasAnyAuthority(\"" + AuthorityConstants.MAINTENANCE + "\")" )
     @Operation(summary = "Obtener monopatines con datos actualizados", description = "Este endpoint se utiliza para obtener una lista de monopatines con sus datos (kilómetros y tiempo) actualizados.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Monopatines obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ScooterResponseDTO.class)))),
@@ -266,6 +266,7 @@ public class ScooterController {
     }
     // punto E
     @GetMapping("/availabilityQuantity")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\")" )
     @Operation(summary = "Obtener cantidad de monopatines por disponibilidad", description = "Este endpoint se utiliza para obtener la cantidad de monopatines disponibles y no disponibles.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Cantidad de monopatines obtenida correctamente", content = @Content(mediaType = "text/plain")),
