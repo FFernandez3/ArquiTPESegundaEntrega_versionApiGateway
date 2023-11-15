@@ -48,6 +48,7 @@ public class ScooterController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
     })
     @GetMapping("")
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     public List<ScooterResponseDTO> findAll( ){
         return this.scooterService.findAll();
     }

@@ -12,21 +12,21 @@ public class RouterConfig {
     @Bean
     public RouteLocator routes( RouteLocatorBuilder builder, AuthenticationFilter authFilter ) {
         return builder.routes()
-                .route("lll", r -> r.path("/api/employees/authenticate" )
+                .route("autenticacion", r -> r.path("/api/employees/authenticate" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
-                        .uri("http://localhost:8081"))
-                .route("auth-service", r -> r.path("/api/register" )
+                        .uri("http://localhost:8084"))
+                .route("registro", r -> r.path("/api/employees/register" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
-                        .uri("http://localhost:8081"))
-                .route("micro-a-product", r -> r.path( "/api/admin/products/**" )
+                        .uri("http://localhost:8084"))
+                .route("micro-a-product", r -> r.path( "/api/employees/administrators/scooters" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
-                        .uri("http://localhost:8082"))
+                        .uri("http://localhost:8084"))
                 .route("micro-a-product", r -> r.path("/api/products/**")
                         .filters(f ->
                                 f.filter(authFilter.apply(new AuthenticationFilter.Config()))

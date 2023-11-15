@@ -5,6 +5,7 @@ import com.app.managementmicroservice.dto.*;
 import com.app.managementmicroservice.security.jwt.JwtFilter;
 import com.app.managementmicroservice.security.jwt.TokenProvider;
 import com.app.managementmicroservice.service.AdminService;
+import com.app.managementmicroservice.service.AuthorityConstant;
 import com.app.managementmicroservice.service.AuthorityService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import lombok.Data;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -216,6 +218,7 @@ public ResponseEntity<ValidateTokenDTO> validateGet() {
         }
     }
     @GetMapping("/administrators/scooters")
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstant.ADMIN + "\" )" )
     @Operation(summary = "Obtener lista de monopatines", description = "Este endpoint se utiliza para obtener una lista de todos los monopatines.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Monopatines obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),
