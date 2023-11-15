@@ -14,6 +14,6 @@ public class ValidateTokenDTO {
 
     private boolean isAuthenticated;
     private String username;
-    private List<String> authorities;
+    private String role;
 
 }

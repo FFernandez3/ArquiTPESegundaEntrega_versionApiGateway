@@ -15,7 +15,7 @@ public class ManagerRequestDTO {
     private String name;
     private String email;
     private String password;
-    private Set<String> authorities;
+    private String role;
 
 
 }

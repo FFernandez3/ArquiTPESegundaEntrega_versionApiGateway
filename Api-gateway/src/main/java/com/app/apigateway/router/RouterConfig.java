@@ -12,7 +12,7 @@ public class RouterConfig {
     @Bean
     public RouteLocator routes( RouteLocatorBuilder builder, AuthenticationFilter authFilter ) {
         return builder.routes()
-                .route("lll", r -> r.path("/api/authenticate" )
+                .route("lll", r -> r.path("/api/employees/authenticate" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )

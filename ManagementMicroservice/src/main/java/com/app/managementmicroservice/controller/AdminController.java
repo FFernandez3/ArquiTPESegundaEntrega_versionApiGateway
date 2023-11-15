@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -49,11 +50,15 @@ public class AdminController {
 @GetMapping("/validate")
 public ResponseEntity<ValidateTokenDTO> validateGet() {
     final var employee = SecurityContextHolder.getContext().getAuthentication();
+    final var authorities = employee.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.joining(", "));
     /*final var authorities = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();*/
     return ResponseEntity.ok(
             ValidateTokenDTO.builder()
                     .username( employee.getName() )
-                    .role( employee.getRole() )
+                    .role(authorities)
                     .isAuthenticated( true )
                     .build()
     );
@@ -87,7 +92,7 @@ public ResponseEntity<ValidateTokenDTO> validateGet() {
         if(newManager!= null){
             return new ResponseEntity<>( newManager, HttpStatus.CREATED );
         }
-        return new ResponseEntity<>("Ya existe un administrador con ese email: " + request.getEmail(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Ya existe un administrador con ese email: " + request.getEmail() + "o el rol ingresado es distinto de admin o maintenance.", HttpStatus.BAD_REQUEST);
     }
     static class JWTToken {
         private String idToken;

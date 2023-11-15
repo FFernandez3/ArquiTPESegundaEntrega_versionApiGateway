@@ -2,9 +2,11 @@ package com.app.managementmicroservice.config;
 
 
 import com.app.managementmicroservice.security.jwt.JwtConfigurer;
+import com.app.managementmicroservice.security.jwt.JwtFilter;
 import com.app.managementmicroservice.security.jwt.TokenProvider;
 import com.app.managementmicroservice.service.AuthorityConstant;
 
+import io.jsonwebtoken.JwtParser;
 import lombok.RequiredArgsConstructor;
 
 
@@ -23,6 +25,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
@@ -43,18 +46,23 @@ public class SecurityConfig {
         // AGREGAMOS NUESTRA CONFIG DE JWT.
         http
                 .apply( securityConfigurerAdapter() );
+
         http
                 .csrf( AbstractHttpConfigurer::disable )
                 // MANEJAMOS LOS PERMISOS A LOS ENDPOINTS.
-                .authorizeHttpRequests( auth -> auth
 
-                        //.requestMatchers("/api/employees").hasRole(AuthorityConstant.ADMIN)
+
+                .authorizeHttpRequests(auth-> auth
+
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees")).hasAuthority(AuthorityConstant.MAINTENANCE)
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/register")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/authenticate")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/authority")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/allAuthorities")).permitAll()
-                        //.anyRequest().authenticated()
+
+
+                        .anyRequest().authenticated()
 
 
                 )

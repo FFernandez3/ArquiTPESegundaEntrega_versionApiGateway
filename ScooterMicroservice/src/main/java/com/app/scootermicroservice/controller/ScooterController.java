@@ -1,5 +1,6 @@
 package com.app.scootermicroservice.controller;
 
+import com.app.scootermicroservice.Security.jwt.AuthorityConstants;
 import com.app.scootermicroservice.domain.Scooter;
 import com.app.scootermicroservice.domain.Stop;
 import com.app.scootermicroservice.dto.ScooterResponseDTO;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.Tuple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -86,6 +88,7 @@ public class ScooterController {
             @ApiResponse(responseCode = "404", description = "Monopatín no encontrado", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
     })
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         Optional<Scooter> entityDeleted = scooterService.deleteById(id);
 

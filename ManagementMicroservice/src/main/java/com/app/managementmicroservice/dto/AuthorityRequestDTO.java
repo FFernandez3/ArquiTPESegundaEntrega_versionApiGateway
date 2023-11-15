@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthorityRequestDTO {
     private String name;
+
 }

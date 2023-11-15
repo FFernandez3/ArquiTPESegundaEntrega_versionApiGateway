@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -66,32 +67,28 @@ public class AdminService {
         if(this.managementRepository.existsManagersByEmailIgnoreCase(request.getEmail())> 0){
             return null;
         }
-        final var authorities = request.getAuthorities()
-                .stream()
-                .map( string -> this.authorityRepository.findById(string).orElseThrow( () -> new NotFoundException("Authority", string ) ) )
-                .toList();
-        if( authorities.isEmpty() ) {
-            throw new ManagerException(EnumManagerException.invalid_authorities,
-                    String.format("No se encontro ninguna autoridad con id %s", request.getAuthorities().toString()));
-        }
-        final var manager = new Manager(request);
-        manager.setAuthorities(authorities);
-        final var encryptedPassword = passwordEncoder.encode(request.getPassword());
-        manager.setPassword( encryptedPassword );
-        final var createdManager = this.managementRepository.save(manager);
-        return new ManagerResponseDTO(createdManager);
+        final var role = request.getRole();
+            if(Objects.equals(role, AuthorityConstant.ADMIN) || Objects.equals(role, AuthorityConstant.MAINTENANCE)){
+                final var manager = new Manager(request);
+                final var encryptedPassword = passwordEncoder.encode(request.getPassword());
+                manager.setPassword( encryptedPassword );
+                final var createdManager = this.managementRepository.save(manager);
+                return  new ManagerResponseDTO(createdManager);
+            }
+           return null;
+
     }
 
     public List<ManagerResponseDTO> findAll() {
         return this.managementRepository.findAll().stream()
                 .map(manager -> new ManagerResponseDTO(manager.get_id(),
-                        manager.getName(), manager.getEmail()))
+                        manager.getName(), manager.getEmail(), manager.getRole()))
                 .toList();
 
     }
     public Optional<ManagerResponseDTO> findById(String id) {
         return this.managementRepository.findById(id).map(manager -> new ManagerResponseDTO(manager.get_id(),
-                manager.getName(), manager.getEmail()));
+                manager.getName(), manager.getEmail(), manager.getRole()));
 
     }
     @Transactional
