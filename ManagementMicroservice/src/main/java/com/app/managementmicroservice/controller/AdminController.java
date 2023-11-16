@@ -127,7 +127,7 @@ public ResponseEntity<ValidateTokenDTO> validateGet() {
         return this.adminService.save(entity);
     }
     @GetMapping("")
-
+    @PreAuthorize( "hasAuthority(\"" + AuthorityConstant.ADMIN + "\" )" )
     @Operation(summary = "Obtener lista de empleados", description = "Este endpoint se utiliza para obtener una lista de todos los empleado.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Empleados obtenidos correctamente", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Manager.class)))),

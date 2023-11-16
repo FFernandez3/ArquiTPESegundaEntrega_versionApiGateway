@@ -42,6 +42,7 @@ public class HttpConfig {
                 .authorizeRequests()
                 .requestMatchers(new AntPathRequestMatcher("api/prices/**")).hasAuthority(AuthorityConstants.ADMIN)
                 .requestMatchers(new AntPathRequestMatcher("api/travels")).hasAuthority(AuthorityConstants.ADMIN)
+                .requestMatchers(new AntPathRequestMatcher("api/travels/allByYear/**")).hasAuthority(AuthorityConstants.ADMIN)
                 .requestMatchers(new AntPathRequestMatcher("api/travels/invoiced/month1/**")).hasAuthority(AuthorityConstants.ADMIN);
 
         /*.anyRequest().authenticated();*/

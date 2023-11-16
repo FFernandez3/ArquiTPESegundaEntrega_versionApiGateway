@@ -27,6 +27,9 @@ public class RouterConfig {
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
                         .uri("http://localhost:8082"))
+                .route("scooters near", r -> r.path( "/api/scooters/latitude/**" )
+
+                        .uri("http://localhost:8082"))
                 .route("allScooters", r -> r.path( "/api/scooters/**" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
@@ -78,6 +81,11 @@ public class RouterConfig {
                         )
                         .uri("http://localhost:8081"))
                 .route("travels", r -> r.path("/api/travels/invoced/month1/**" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8081"))
+                .route("travels by year", r -> r.path("/api/travels/allByYear/**" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )

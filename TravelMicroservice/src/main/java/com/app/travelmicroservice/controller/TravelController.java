@@ -125,6 +125,7 @@ public class TravelController {
     }
 
     @GetMapping("/allByYear/{year}/quantity/{quantity}")
+    @PreAuthorize( "hasAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     public ResponseEntity<?>getTravelsByYear(@PathVariable Long year, @PathVariable Long quantity) {
         List<Tuple> results = travelService.getTravelsByYear(year, quantity);
         if (results != null) {

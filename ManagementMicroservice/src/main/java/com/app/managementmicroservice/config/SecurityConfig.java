@@ -54,12 +54,11 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth-> auth
 
-                                .requestMatchers(new AntPathRequestMatcher("/api/employees")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/employees")).hasAuthority(AuthorityConstant.ADMIN)
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/administrators/scooters")).hasAuthority(AuthorityConstant.ADMIN)
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/register")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/authenticate")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/validate")).permitAll()
-
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/authority")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/employees/allAuthorities")).permitAll()
 

@@ -6,6 +6,7 @@ import com.app.usermicroservice.userDomain.Account;
 import com.app.usermicroservice.userDomain.User;
 import com.app.usermicroservice.userRepository.AccountRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

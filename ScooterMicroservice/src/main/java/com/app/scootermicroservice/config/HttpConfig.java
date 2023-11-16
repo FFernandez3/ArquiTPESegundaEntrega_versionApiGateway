@@ -45,9 +45,10 @@ public class HttpConfig {
                     .requestMatchers((new AntPathRequestMatcher("api/scooters/orderByTimeWithBreaks"))).hasAuthority((AuthorityConstants.MAINTENANCE))
                     .requestMatchers(new AntPathRequestMatcher("api/scooters/allUpdated" )).hasAuthority(AuthorityConstants.MAINTENANCE)
                     .requestMatchers(new AntPathRequestMatcher("api/scooters/isAvailable")).hasAuthority(AuthorityConstants.MAINTENANCE)
+                    .requestMatchers(new AntPathRequestMatcher("api/scooters/latitude/**" )).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("api/scooters/**")).hasAuthority(AuthorityConstants.ADMIN)
-
                     .requestMatchers(new AntPathRequestMatcher("api/stops/**" )).hasAuthority( AuthorityConstants.ADMIN );
+
                     /*.anyRequest().authenticated();*/
 
         http
