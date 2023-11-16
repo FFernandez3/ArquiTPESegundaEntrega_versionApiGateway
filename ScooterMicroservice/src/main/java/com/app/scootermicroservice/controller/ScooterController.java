@@ -32,6 +32,7 @@ public class ScooterController {
     }
 
     @PostMapping("")
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     @Operation(summary = "Agregar un nuevo monopatín", description = "Este endpoint se utiliza para agregar un nuevo monopatín.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Éxito - Monopatín agregado correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ScooterResponseDTO.class))),
@@ -48,12 +49,13 @@ public class ScooterController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor", content = @Content(mediaType = "text/plain"))
     })
     @GetMapping("")
-    @PreAuthorize( "hasAuthority('ADMIN')" )
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     public List<ScooterResponseDTO> findAll( ){
         return this.scooterService.findAll();
     }
     //busca por id
     @GetMapping("/id/{id}")
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     @Operation(summary = "Buscar monopatín por ID", description = "Este endpoint se utiliza para buscar un monopatín por su ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Monopatín encontrado correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ScooterResponseDTO.class))),
@@ -101,6 +103,7 @@ public class ScooterController {
     }
     //esto solo el admin
     @PutMapping("/isAvailable/{id}")
+    @PreAuthorize( "hasAuthority(\"" + AuthorityConstants.MAINTENANCE + "\" )" )
     @Operation(summary = "Actualizar estado de disponibilidad de un monopatín por ID", description = "Este endpoint se utiliza para actualizar el estado de disponibilidad de un monopatín por su ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Estado de disponibilidad del monopatín actualizado correctamente", content = @Content(mediaType = "text/plain")),

@@ -1,5 +1,6 @@
 package com.app.scootermicroservice.controller;
 
+import com.app.scootermicroservice.Security.jwt.AuthorityConstants;
 import com.app.scootermicroservice.domain.Stop;
 import com.app.scootermicroservice.dto.StopRequestDTO;
 import com.app.scootermicroservice.dto.StopResponseDTO;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -25,7 +27,7 @@ public class StopController {
         this.stopService = stopService;
     }
     @PostMapping("")
-
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     @Operation(summary = "Agregar una parada", description = "Este endpoint se utiliza para agregar una nueva parada.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Parada agregada correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StopResponseDTO.class))),
@@ -65,6 +67,7 @@ public class StopController {
     }
     //esto debe hacerlo solo el admin
     @DeleteMapping("/{id}")
+    @PreAuthorize( "hasAnyAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     @Operation(summary = "Eliminar una parada por ID", description = "Este endpoint se utiliza para eliminar una parada por su ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Parada eliminada correctamente", content = @Content(mediaType = "text/plain")),

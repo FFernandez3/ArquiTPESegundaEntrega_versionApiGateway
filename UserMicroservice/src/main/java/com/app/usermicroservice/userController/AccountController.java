@@ -2,6 +2,7 @@ package com.app.usermicroservice.userController;
 
 import com.app.usermicroservice.dto.AccountDTO;
 import com.app.usermicroservice.dto.UserDTO;
+import com.app.usermicroservice.security.jwt.AuthorityConstants;
 import com.app.usermicroservice.userDomain.Account;
 import com.app.usermicroservice.userDomain.User;
 import com.app.usermicroservice.userService.AccountService;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,6 +105,7 @@ public class AccountController {
     }
 
     @PutMapping("/isCanceled/{id}")
+    @PreAuthorize( "hasAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     @Operation(summary = "Editar el estado de una cuenta", description = "Este endpoint se utiliza para editar el estado de una cuenta por ID.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Éxito - Estado de la cuenta actualizado correctamente", content = @Content(mediaType = "application/json")),

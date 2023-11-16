@@ -1,7 +1,7 @@
-package com.app.scootermicroservice.config;
+package com.app.travelmicroservice.config;
 
-import com.app.scootermicroservice.Security.jwt.AuthorityConstants;
-import com.app.scootermicroservice.Security.jwt.JwtFilter;
+import com.app.travelmicroservice.security.jwt.AuthorityConstants;
+import com.app.travelmicroservice.security.jwt.JwtFilter;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -40,15 +40,11 @@ public class HttpConfig {
         http
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeRequests()
-                    .requestMatchers((new AntPathRequestMatcher("api/scooters/orderByKilometers"))).hasAuthority((AuthorityConstants.MAINTENANCE))
-                    .requestMatchers((new AntPathRequestMatcher("api/scooters/orderByTimeWithoutBreaks"))).hasAuthority((AuthorityConstants.MAINTENANCE))
-                    .requestMatchers((new AntPathRequestMatcher("api/scooters/orderByTimeWithBreaks"))).hasAuthority((AuthorityConstants.MAINTENANCE))
-                    .requestMatchers(new AntPathRequestMatcher("api/scooters/allUpdated" )).hasAuthority(AuthorityConstants.MAINTENANCE)
-                    .requestMatchers(new AntPathRequestMatcher("api/scooters/isAvailable")).hasAuthority(AuthorityConstants.MAINTENANCE)
-                    .requestMatchers(new AntPathRequestMatcher("api/scooters/**")).hasAuthority(AuthorityConstants.ADMIN)
+                .requestMatchers(new AntPathRequestMatcher("api/prices/**")).hasAuthority(AuthorityConstants.ADMIN)
+                .requestMatchers(new AntPathRequestMatcher("api/travels")).hasAuthority(AuthorityConstants.ADMIN)
+                .requestMatchers(new AntPathRequestMatcher("api/travels/invoiced/month1/**")).hasAuthority(AuthorityConstants.ADMIN);
 
-                    .requestMatchers(new AntPathRequestMatcher("api/stops/**" )).hasAuthority( AuthorityConstants.ADMIN );
-                    /*.anyRequest().authenticated();*/
+        /*.anyRequest().authenticated();*/
 
         http
                 .anonymous( AbstractHttpConfigurer::disable )

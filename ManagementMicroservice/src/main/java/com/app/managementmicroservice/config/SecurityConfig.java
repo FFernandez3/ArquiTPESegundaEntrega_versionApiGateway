@@ -65,7 +65,7 @@ public class SecurityConfig {
 
 
 
-                        .anyRequest().authenticated()
+                        /*.anyRequest().authenticated()*/
 
 
                 )

@@ -22,7 +22,12 @@ public class RouterConfig {
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
                         .uri("http://localhost:8084"))
-                .route("allScooters", r -> r.path( "/api/scooters" )
+                .route("change disponibility", r -> r.path( "/api/scooters/isAvailable/**" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8082"))
+                .route("allScooters", r -> r.path( "/api/scooters/**" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
@@ -48,8 +53,35 @@ public class RouterConfig {
                         )
                         .uri("http://localhost:8084"))
                 .route("scooters near", r -> r.path("/api/users/**" )
-
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
                         .uri("http://localhost:8083"))
+                .route("cancel accounts", r -> r.path("/api/accounts/isCanceled/**" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8083"))
+                .route("stops", r -> r.path("/api/stops/**" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8082"))
+                .route("price", r -> r.path("/api/prices/**" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8081"))
+                .route("travels", r -> r.path("/api/travels" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8081"))
+                .route("travels", r -> r.path("/api/travels/invoced/month1/**" )
+                        .filters( f ->
+                                f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
+                        )
+                        .uri("http://localhost:8081"))
                 .build();
     }
 

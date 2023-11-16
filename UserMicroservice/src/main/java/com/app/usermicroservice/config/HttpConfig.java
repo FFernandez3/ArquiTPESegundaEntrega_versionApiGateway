@@ -40,7 +40,8 @@ public class HttpConfig {
         http
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeRequests()
-                .requestMatchers((new AntPathRequestMatcher("api/users/**"))).permitAll();
+                .requestMatchers((new AntPathRequestMatcher("api/users/**"))).permitAll()
+                .requestMatchers((new AntPathRequestMatcher("api/accounts/isCanceled/**"))).hasAuthority(AuthorityConstants.ADMIN);
 
 
 

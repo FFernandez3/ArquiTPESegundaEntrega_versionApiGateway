@@ -3,10 +3,12 @@ package com.app.travelmicroservice.controller;
 import com.app.travelmicroservice.domain.Travel;
 import com.app.travelmicroservice.dto.TravelRequestDTO;
 import com.app.travelmicroservice.dto.TravelResponseDTO;
+import com.app.travelmicroservice.security.jwt.AuthorityConstants;
 import com.app.travelmicroservice.service.TravelService;
 import jakarta.persistence.Tuple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ public class TravelController {
     }
 
     @GetMapping("")
+    @PreAuthorize( "hasAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     public List<TravelResponseDTO> findAll( ){
         return this.travelService.findAll();
     }
@@ -93,6 +96,7 @@ public class TravelController {
 
     }
     //consigna D
+    @PreAuthorize( "hasAuthority(\"" + AuthorityConstants.ADMIN + "\" )" )
     @GetMapping("invoiced/month1/{month1}/month2/{month2}/year/{year}")
     public  ResponseEntity<?> getTotalInvoicedByDate(@PathVariable Integer month1, @PathVariable Integer month2, @PathVariable Integer year){
 
