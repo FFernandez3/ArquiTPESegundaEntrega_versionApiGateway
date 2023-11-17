@@ -80,7 +80,7 @@ public class RouterConfig {
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
                         .uri("http://localhost:8081"))
-                .route("travels", r -> r.path("/api/travels/invoced/month1/**" )
+                .route("travels", r -> r.path("/api/travels/invoiced/month1/**" )
                         .filters( f ->
                                 f.filter( authFilter.apply( new AuthenticationFilter.Config() ) )
                         )
