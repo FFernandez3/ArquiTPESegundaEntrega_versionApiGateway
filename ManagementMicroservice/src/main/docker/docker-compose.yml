@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  management_app:
+    container_name: management_app
+    image: pee-java-app:1.0.0
+    build:
+      context: C:\\Users\\florf\\IdeaProjects\\ArquiTPEPrimerEntrega\\ManagementMicroservice
+      dockerfile: src/main/docker/Dockerfile
+    ports:
+      - "8084:8084"
+
+  mongo:
+    container_name: mongo
+    image: mongo:5.0.0
+    restart: on-failure
+    command:
+      - --auth
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: management
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:
+
+

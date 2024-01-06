@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@EnableTransactionManagement
+
 @EnableJpaRepositories(basePackages=("com.app.scootermicroservice.repository"))
 @EntityScan(basePackages = "com.app.scootermicroservice.domain")
 public class AppConfig {
