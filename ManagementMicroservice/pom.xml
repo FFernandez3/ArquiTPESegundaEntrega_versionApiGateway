@@ -100,6 +100,11 @@
             <version>3.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <!--PARA EVITAR QUE EL CONTAINER DE LA APP SE LANZE PRIMERO QUE EL CONTAINER MONGO-->
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
 
     </dependencies>
 

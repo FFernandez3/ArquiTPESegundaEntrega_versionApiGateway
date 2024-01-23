@@ -8,9 +8,13 @@ WORKDIR /app
 COPY out/artifacts/demo_jar/demo.jar /app/
 #para asegurar que se este copiando el archivo MANIFEST
 COPY src/main/resources /app/src/main/resources
+COPY src/main/docker/wait-for-it.sh /app/src/main/docker/wait-for-it.sh
+#RUN chmod +x /app/src/main/docker/wait-for-it.sh
 
 # Expone el puerto en el que tu aplicación Spring Boot está escuchando
 EXPOSE 8084
+
+
 
 # Comando para ejecutar tu aplicación Spring Boot
 CMD ["java", "-jar", "demo.jar"]

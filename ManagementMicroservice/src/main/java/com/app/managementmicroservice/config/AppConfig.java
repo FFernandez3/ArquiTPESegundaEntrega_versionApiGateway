@@ -18,11 +18,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 import javax.sql.DataSource;
 
 @Configuration
+@EnableRetry // Agrega esta anotación para habilitar la funcionalidad de reintentos
 @EnableTransactionManagement
 @EnableMongoRepositories(basePackages=("com.app.managementmicroservice.repository"))
 @EntityScan(basePackages = "com.app.managementmicroservice.domain")
@@ -44,8 +48,11 @@ public class AppConfig {
     }
 
     @Bean
+    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 7000)) // Intenta 5 veces con un retardo de 7 segundos entre intentos
     public MongoClient mongo() {
-        ConnectionString connectionString = new ConnectionString("mongodb://root:root@localhost:27017/management?authSource=admin");
+        String mongoIpAddress = "mongo";
+        ConnectionString connectionString = new ConnectionString("mongodb://root:root@" + mongoIpAddress + ":27017/management?authSource=admin");
+        //ConnectionString connectionString = new ConnectionString("mongodb://root:root@localhost:27017/management?authSource=admin");
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .build();
